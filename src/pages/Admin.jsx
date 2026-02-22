@@ -31,41 +31,6 @@ async function uploadToStorage(file, folder = 'posters') {
 
 /** Fetch a remote image URL and upload it to Supabase Storage, return public URL */
 // NEW - replace with this
-async function mirrorImageToStorage(remoteUrl) {
-  const proxies = [
-    async () => {
-      const res = await fetch(
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(remoteUrl)}`,
-        { signal: AbortSignal.timeout(10_000) }
-      )
-      if (!res.ok) throw new Error(`allorigins ${res.status}`)
-      return res.blob()
-    },
-    async () => {
-      const res = await fetch(
-        `https://corsproxy.io/?${encodeURIComponent(remoteUrl)}`,
-        { signal: AbortSignal.timeout(10_000) }
-      )
-      if (!res.ok) throw new Error(`corsproxy.io ${res.status}`)
-      return res.blob()
-    },
-  ]
-
-  let lastError
-  for (const tryProxy of proxies) {
-    try {
-      const blob = await tryProxy()
-      const ext = (blob.type || 'image/jpeg').split('/')[1]?.split('+')[0] || 'jpg'
-      const file = new File([blob], `poster.${ext}`, { type: blob.type })
-      return await uploadToStorage(file, 'api-posters')
-    } catch (err) {
-      lastError = err
-      console.warn('[mirrorImageToStorage] proxy failed, trying next…', err.message)
-    }
-  }
-
-  throw new Error(`All proxies failed: ${lastError?.message}`)
-}
 
 // ── ADD MANUALLY ─────────────────────────────────────────────
 function AddManually({ addAnime }) {
@@ -204,22 +169,20 @@ function AddViaAPI({ addAnime, hasAnime }) {
     setLoading(false)
   }
 
-  // NEW - replace with this
   const handleAdd = async (anime) => {
     const title = anime.title
     if (hasAnime(title)) { toast('Already in collection!', 'error'); return }
 
     setSavingId(anime.mal_id)
     try {
-      const remoteUrl = anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url || ''
-      let posterUrl = ''
-      if (remoteUrl) {
-        toast(`Uploading "${title}" poster to Supabase…`)
-        posterUrl = await mirrorImageToStorage(remoteUrl) // throws if all proxies fail
-      }
+      const posterUrl =
+        anime.images?.jpg?.large_image_url ||
+        anime.images?.jpg?.image_url ||
+        ''
+
       await addAnime({ name: title, poster: posterUrl, description: anime.synopsis || '' })
       setAddedIds(prev => new Set([...prev, anime.mal_id]))
-      toast(`"${title}" saved with Supabase poster! 🎌`)
+      toast(`"${title}" added! 🎌`)
     } catch (err) {
       toast(`Failed: ${err.message}`, 'error')
       console.error('[handleAdd]', err)
@@ -234,8 +197,9 @@ function AddViaAPI({ addAnime, hasAnime }) {
     <section>
       <h2 className="font-display font-bold text-2xl grad-text-accent mb-1">Add via Jikan API</h2>
       <p className="text-slate-600 text-sm mb-7 font-light">
-        Posters are uploaded to Supabase Storage — not just linked externally
+        Search and add anime directly from the Jikan API
       </p>
+
 
       <form className="flex gap-3 mb-7" onSubmit={handleSearch}>
         <input type="text"
@@ -280,11 +244,6 @@ function AddViaAPI({ addAnime, hasAnime }) {
                 <p className="text-[0.7rem] text-slate-500 leading-relaxed line-clamp-2">
                   {anime.synopsis || 'No description.'}
                 </p>
-
-                {/* Storage indicator */}
-                <span className="text-[0.6rem] text-violet-500/70">
-                  📦 Stored in Supabase
-                </span>
 
                 <button
                   onClick={() => handleAdd(anime)}
