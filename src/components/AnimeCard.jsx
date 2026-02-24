@@ -42,12 +42,12 @@ export default function AnimeCard({ anime, isAdmin, onDelete }) {
       {/* Hover description overlay */}
       <div className="absolute inset-0 flex flex-col justify-center p-6
                       opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-           style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.18), rgba(8,145,178,0.12))',
-                    backdropFilter: 'blur(6px)' }}>
+           style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.25), rgba(8,145,178,0.18))',
+                    backdropFilter: 'blur(8px)' }}>
         <h3 className="font-display font-bold text-base mb-3 leading-snug grad-text-accent">
           {anime.name}
         </h3>
-        <p className="text-xs text-slate-400 leading-relaxed line-clamp-6">
+        <p className="text-xs text-slate-200 leading-relaxed line-clamp-6">
           {anime.description || 'No description available for this anime.'}
         </p>
         {isAdmin && (

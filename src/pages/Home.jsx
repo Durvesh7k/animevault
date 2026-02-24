@@ -4,6 +4,7 @@ import { useToast } from '../context/ToastContext'
 import Navbar from '../components/Navbar'
 import AnimeCard from '../components/AnimeCard'
 import Pagination from '../components/Pagination'
+import Footer from '../components/Footer'
 
 export default function Home({ animeList, loading, error, removeAnime }) {
   const { isAdmin } = useAuth()
@@ -31,10 +32,6 @@ export default function Home({ animeList, loading, error, removeAnime }) {
     try { await removeAnime(id); toast('Anime removed') }
     catch { toast('Failed to remove', 'error') }
   }
-
-  const selectCls = `bg-white/[0.05] border border-white/[0.08] text-slate-300
-                     px-3 py-2 rounded-lg text-xs font-sans outline-none cursor-pointer
-                     hover:border-violet-500/40 transition-colors duration-200`
 
   return (
     <div className="relative min-h-screen bg-bg">
@@ -72,12 +69,12 @@ export default function Home({ animeList, loading, error, removeAnime }) {
             )}
           </p>
           <div className="flex items-center gap-2 flex-wrap">
-            <select className={selectCls} value={sort} onChange={e => handleSort(e.target.value)}>
+            <select className="text-xs sm:text-sm" value={sort} onChange={e => handleSort(e.target.value)}>
               <option value="newest">Newest First</option>
               <option value="az">A → Z</option>
               <option value="za">Z → A</option>
             </select>
-            <select className={selectCls} value={perPage} onChange={e => handlePerPage(e.target.value)}>
+            <select className="text-xs sm:text-sm" value={perPage} onChange={e => handlePerPage(e.target.value)}>
               <option value={5}>5 / page</option>
               <option value={10}>10 / page</option>
               <option value={20}>20 / page</option>
@@ -120,6 +117,7 @@ export default function Home({ animeList, loading, error, removeAnime }) {
 
         <Pagination current={page} total={totalPages} onPage={setPage} />
       </div>
+      <Footer />
     </div>
   )
 }
