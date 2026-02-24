@@ -90,7 +90,7 @@ function AddManually({ addAnime }) {
         Upload a poster image — it's stored in Supabase Storage
       </p>
 
-      <form onSubmit={handleSubmit} className="glass rounded-2xl p-7 max-w-lg flex flex-col gap-5">
+      <form onSubmit={handleSubmit} className="glass rounded-2xl p-5 md:p-7 max-w-full md:max-w-lg flex flex-col gap-5">
 
         {/* Name */}
         <div>
@@ -201,13 +201,13 @@ function AddViaAPI({ addAnime, hasAnime }) {
       </p>
 
 
-      <form className="flex gap-3 mb-7" onSubmit={handleSearch}>
+      <form className="flex flex-col md:flex-row gap-3 mb-7" onSubmit={handleSearch}>
         <input type="text"
           placeholder="Search anime (e.g. Naruto, Demon Slayer...)"
           value={query} onChange={e => setQuery(e.target.value)}
-          className="form-input flex-1" />
+          className="form-input flex-1 text-xs md:text-sm" />
         <button type="submit" disabled={loading}
-          className="px-5 py-3 rounded-xl font-semibold text-sm text-white whitespace-nowrap
+          className="px-4 md:px-5 py-3 rounded-xl font-semibold text-xs md:text-sm text-white whitespace-nowrap
                      transition-all duration-200 disabled:opacity-50 hover:opacity-90 hover:-translate-y-0.5"
           style={{ background: 'linear-gradient(135deg,#7c3aed,#0891b2)' }}>
           {loading ? 'Searching…' : '🔍 Search'}
@@ -221,7 +221,7 @@ function AddViaAPI({ addAnime, hasAnime }) {
       )}
 
       {results.length > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {results.map(anime => (
             <div key={anime.mal_id}
               className="glass rounded-2xl overflow-hidden transition-all duration-200
@@ -291,14 +291,14 @@ export default function Admin({ addAnime, hasAnime, animeCount }) {
   `
 
   return (
-    <div className="relative min-h-screen bg-bg flex">
+    <div className="relative min-h-screen bg-bg flex flex-col md:flex-row">
       <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
         <div className="mesh-blob-1" />
         <div className="mesh-blob-2" />
       </div>
 
-      <aside className="relative z-10 w-60 shrink-0 glass border-r border-white/[0.07]
-                        flex flex-col px-3 py-6 sticky top-0 h-screen">
+      <aside className="relative z-10 w-full md:w-60 shrink-0 glass border-b md:border-b-0 md:border-r border-white/[0.07]
+                        flex flex-col px-3 py-4 md:py-6 md:sticky md:top-0 md:h-screen">
         <div className="flex items-start gap-3 px-2 mb-8">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-xl shrink-0"
             style={{ background: 'linear-gradient(135deg,#7c3aed,#0891b2)' }}>⚙️</div>
@@ -332,7 +332,7 @@ export default function Admin({ addAnime, hasAnime, animeCount }) {
         </div>
       </aside>
 
-      <main className="relative z-10 flex-1 p-8 overflow-y-auto animate-fade-up">
+      <main className="relative z-10 flex-1 px-4 py-6 md:px-8 md:py-8 overflow-y-auto animate-fade-up">
         {tab === 'manual' && <AddManually addAnime={addAnime} />}
         {tab === 'api' && <AddViaAPI addAnime={addAnime} hasAnime={hasAnime} />}
       </main>
