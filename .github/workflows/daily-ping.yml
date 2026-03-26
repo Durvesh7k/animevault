@@ -1,0 +1,25 @@
+name: Daily URL Ping
+
+on:
+  schedule:
+    # Runs every day at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping application URL
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://durvesh-animevault.vercel.app/)
+          echo "Response status: $response"
+          if [ "$response" != "200" ]; then
+            echo "❌ Failed: Received HTTP status $response"
+            exit 1
+          fi
+          echo "✅ Success: Application is running"
+
+      - name: Notify on failure
+        if: failure()
+        run: echo "⚠️ Daily ping failed! Check the application at https://durvesh-animevault.vercel.app/"
